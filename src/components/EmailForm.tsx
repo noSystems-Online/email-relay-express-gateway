@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TagInput } from "@/components/TagInput";
-import { Plus, Trash } from "lucide-react";
+import { Plus, Trash, Upload, FileText } from "lucide-react";
 
 export interface EmailContent {
   fromEmail: string;
@@ -28,25 +28,14 @@ export interface EmailContent {
 
 interface EmailFormProps {
   onEmailUpdate: (emailContent: EmailContent) => void;
+  emailContent: EmailContent;
 }
 
-const EmailForm: React.FC<EmailFormProps> = ({ onEmailUpdate }) => {
-  const [emailContent, setEmailContent] = useState<EmailContent>({
-    fromEmail: '',
-    fromName: '',
-    replyTo: [],
-    to: [],
-    cc: [],
-    bcc: [],
-    subject: '',
-    text: '',
-    html: '',
-    attachments: []
-  });
+const EmailForm: React.FC<EmailFormProps> = ({ onEmailUpdate, emailContent }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (field: keyof EmailContent, value: string | string[] | any[]) => {
     const updated = { ...emailContent, [field]: value };
-    setEmailContent(updated);
     onEmailUpdate(updated);
   };
 
@@ -66,6 +55,47 @@ const EmailForm: React.FC<EmailFormProps> = ({ onEmailUpdate }) => {
   const removeAttachment = (index: number) => {
     const updatedAttachments = emailContent.attachments.filter((_, i) => i !== index);
     handleChange('attachments', updatedAttachments);
+  };
+
+  const handleFileSelect = async (index: number) => {
+    if (!fileInputRef.current) return;
+    
+    fileInputRef.current.dataset.attachmentIndex = index.toString();
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    
+    const file = files[0];
+    const index = parseInt(fileInputRef.current?.dataset.attachmentIndex || "0");
+    
+    // Read file content
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (!event.target || typeof event.target.result !== 'string') return;
+      
+      const fileContent = event.target.result;
+      
+      // Update attachment
+      const updatedAttachments = [...emailContent.attachments];
+      updatedAttachments[index] = {
+        ...updatedAttachments[index],
+        filename: file.name,
+        content: fileContent,
+        contentType: file.type || 'application/octet-stream'
+      };
+      
+      handleChange('attachments', updatedAttachments);
+    };
+    
+    reader.readAsDataURL(file);
+    
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -189,11 +219,19 @@ const EmailForm: React.FC<EmailFormProps> = ({ onEmailUpdate }) => {
               </Button>
             </div>
 
+            {/* Hidden file input for file browsing */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              onChange={handleFileChange}
+            />
+
             {emailContent.attachments.length === 0 ? (
               <p className="text-sm text-muted-foreground">No attachments</p>
             ) : (
               emailContent.attachments.map((attachment, index) => (
-                <div key={index} className="grid grid-cols-[1fr,1fr,auto] gap-2 items-end">
+                <div key={index} className="grid grid-cols-[1fr,1fr,auto,auto] gap-2 items-end">
                   <div className="space-y-1">
                     <Label className="text-xs">Filename</Label>
                     <Input
@@ -210,6 +248,15 @@ const EmailForm: React.FC<EmailFormProps> = ({ onEmailUpdate }) => {
                       onChange={(e) => handleAttachmentChange(index, 'contentType', e.target.value)}
                     />
                   </div>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handleFileSelect(index)}
+                    title="Browse for file"
+                  >
+                    <Upload className="h-4 w-4" />
+                    <span className="sr-only">Browse</span>
+                  </Button>
                   <Button
                     variant="ghost"
                     size="icon"

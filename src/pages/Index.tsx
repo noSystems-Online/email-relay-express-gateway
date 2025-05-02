@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import SmtpForm, { SmtpSettings } from '@/components/SmtpForm';
 import EmailForm, { EmailContent } from '@/components/EmailForm';
@@ -10,6 +11,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+
+// Local storage keys
+const STORAGE_KEYS = {
+  SMTP_SETTINGS: 'email_gateway_smtp_settings',
+  EMAIL_CONTENT: 'email_gateway_email_content',
+  API_ENDPOINT: 'email_gateway_api_endpoint'
+};
 
 const Index: React.FC = () => {
   const { toast } = useToast();
@@ -42,6 +50,49 @@ const Index: React.FC = () => {
     error?: string;
   } | null>(null);
 
+  // Load data from local storage on component mount
+  useEffect(() => {
+    try {
+      // Load SMTP settings
+      const savedSmtpSettings = localStorage.getItem(STORAGE_KEYS.SMTP_SETTINGS);
+      if (savedSmtpSettings) {
+        setSmtpSettings(JSON.parse(savedSmtpSettings));
+      }
+      
+      // Load email content
+      const savedEmailContent = localStorage.getItem(STORAGE_KEYS.EMAIL_CONTENT);
+      if (savedEmailContent) {
+        setEmailContent(JSON.parse(savedEmailContent));
+      }
+      
+      // Load API endpoint
+      const savedApiEndpoint = localStorage.getItem(STORAGE_KEYS.API_ENDPOINT);
+      if (savedApiEndpoint) {
+        setApiEndpoint(savedApiEndpoint);
+      }
+    } catch (error) {
+      console.error('Error loading data from local storage:', error);
+    }
+  }, []);
+
+  // Update SMTP settings and save to local storage
+  const handleSmtpUpdate = (settings: SmtpSettings) => {
+    setSmtpSettings(settings);
+    localStorage.setItem(STORAGE_KEYS.SMTP_SETTINGS, JSON.stringify(settings));
+  };
+
+  // Update email content and save to local storage
+  const handleEmailUpdate = (content: EmailContent) => {
+    setEmailContent(content);
+    localStorage.setItem(STORAGE_KEYS.EMAIL_CONTENT, JSON.stringify(content));
+  };
+
+  // Update API endpoint and save to local storage
+  const handleApiEndpointChange = (endpoint: string) => {
+    setApiEndpoint(endpoint);
+    localStorage.setItem(STORAGE_KEYS.API_ENDPOINT, endpoint);
+  };
+
   const validateRequest = () => {
     if (!smtpSettings.host) return 'SMTP host is required';
     if (!smtpSettings.port) return 'SMTP port is required';
@@ -71,10 +122,8 @@ const Index: React.FC = () => {
       // Prepare payload for attachments (convert content to base64 if needed)
       const processedAttachments = emailContent.attachments.map(attachment => ({
         ...attachment,
-        // Simple check if it's already base64 or needs encoding
-        content: attachment.content.startsWith('data:') ? 
-          attachment.content : 
-          btoa(unescape(encodeURIComponent(attachment.content)))
+        // File attachments are already in base64 format from the file reader
+        content: attachment.content
       }));
 
       const payload = {
@@ -174,7 +223,7 @@ const Index: React.FC = () => {
                   <Input 
                     id="apiEndpoint"
                     value={apiEndpoint}
-                    onChange={(e) => setApiEndpoint(e.target.value)}
+                    onChange={(e) => handleApiEndpointChange(e.target.value)}
                     placeholder="https://email-relay-express-gateway.onrender.com/api/send-mail"
                     className="font-mono"
                   />
@@ -184,8 +233,8 @@ const Index: React.FC = () => {
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="space-y-8">
-                <SmtpForm onSmtpUpdate={setSmtpSettings} />
-                <EmailForm onEmailUpdate={setEmailContent} />
+                <SmtpForm onSmtpUpdate={handleSmtpUpdate} />
+                <EmailForm onEmailUpdate={handleEmailUpdate} emailContent={emailContent} />
               </div>
               
               <div className="space-y-8">
