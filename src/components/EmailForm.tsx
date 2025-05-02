@@ -202,7 +202,6 @@ const EmailForm: React.FC<EmailFormProps> = ({ onEmailUpdate }) => {
                       placeholder="file.txt"
                       value={attachment.filename}
                       onChange={(e) => handleAttachmentChange(index, 'filename', e.target.value)}
-                      size="sm"
                     />
                   </div>
                   <div className="space-y-1">
@@ -211,7 +210,6 @@ const EmailForm: React.FC<EmailFormProps> = ({ onEmailUpdate }) => {
                       placeholder="text/plain"
                       value={attachment.contentType}
                       onChange={(e) => handleAttachmentChange(index, 'contentType', e.target.value)}
-                      size="sm"
                     />
                   </div>
                   <Button

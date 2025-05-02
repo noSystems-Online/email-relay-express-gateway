@@ -6,7 +6,7 @@ import EmailForm, { EmailContent } from '@/components/EmailForm';
 import ApiDocs from '@/components/ApiDocs';
 import ResponseViewer from '@/components/ResponseViewer';
 import { Button } from '@/components/ui/button';
-import { GitHubLogoIcon, EnvelopeClosedIcon } from '@radix-ui/react-icons';
+import { Github, Mail } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Index: React.FC = () => {
@@ -133,7 +133,7 @@ const Index: React.FC = () => {
         <div className="container mx-auto">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <EnvelopeClosedIcon className="h-6 w-6" />
+              <Mail className="h-6 w-6" />
               <h1 className="text-xl font-bold">SMTP Email API Gateway</h1>
             </div>
             <a
@@ -142,7 +142,7 @@ const Index: React.FC = () => {
               rel="noopener noreferrer"
               className="flex items-center gap-2 hover:text-primary-foreground/80"
             >
-              <GitHubLogoIcon className="h-5 w-5" />
+              <Github className="h-5 w-5" />
               <span className="hidden sm:inline">GitHub</span>
             </a>
           </div>
