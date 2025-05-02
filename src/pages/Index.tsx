@@ -6,8 +6,11 @@ import EmailForm, { EmailContent } from '@/components/EmailForm';
 import ApiDocs from '@/components/ApiDocs';
 import ResponseViewer from '@/components/ResponseViewer';
 import { Button } from '@/components/ui/button';
-import { Github, Mail } from 'lucide-react';
+import { Github, Mail, Server } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const Index: React.FC = () => {
   const { toast } = useToast();
@@ -33,6 +36,7 @@ const Index: React.FC = () => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
+  const [apiEndpoint, setApiEndpoint] = useState('/api/send-email');
   const [response, setResponse] = useState<{
     data?: any;
     status?: number;
@@ -84,7 +88,7 @@ const Index: React.FC = () => {
         }
       };
 
-      const response = await fetch('/api/send-email', {
+      const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -157,6 +161,30 @@ const Index: React.FC = () => {
           </TabsList>
           
           <TabsContent value="sender" className="space-y-8">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Server className="h-5 w-5" />
+                  API Endpoint Configuration
+                </CardTitle>
+                <CardDescription>
+                  Configure the server endpoint for sending emails
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Label htmlFor="apiEndpoint">API Endpoint</Label>
+                  <Input 
+                    id="apiEndpoint"
+                    value={apiEndpoint}
+                    onChange={(e) => setApiEndpoint(e.target.value)}
+                    placeholder="/api/send-email"
+                    className="font-mono"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+            
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="space-y-8">
                 <SmtpForm onSmtpUpdate={setSmtpSettings} />
