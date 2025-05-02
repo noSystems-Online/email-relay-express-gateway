@@ -73,37 +73,35 @@ const EmailForm: React.FC<EmailFormProps> = ({ onEmailUpdate }) => {
       <CardHeader>
         <CardTitle>Email Content</CardTitle>
         <CardDescription>
-          Compose your email message
+          Compose your email message (fields marked with * are required)
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="fromEmail">From Email</Label>
+              <Label htmlFor="fromEmail">From Email <span className="text-muted-foreground text-xs">(optional)</span></Label>
               <Input
                 id="fromEmail"
                 placeholder="sender@example.com"
                 value={emailContent.fromEmail}
                 onChange={(e) => handleChange('fromEmail', e.target.value)}
-                required
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="fromName">From Name</Label>
+              <Label htmlFor="fromName">From Name <span className="text-muted-foreground text-xs">(optional)</span></Label>
               <Input
                 id="fromName"
                 placeholder="Sender Name"
                 value={emailContent.fromName}
                 onChange={(e) => handleChange('fromName', e.target.value)}
-                required
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>To Recipients</Label>
+            <Label>To Recipients *</Label>
             <TagInput
               placeholder="Add recipient email..."
               tags={emailContent.to}
@@ -113,7 +111,7 @@ const EmailForm: React.FC<EmailFormProps> = ({ onEmailUpdate }) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>CC Recipients</Label>
+              <Label>CC Recipients <span className="text-muted-foreground text-xs">(optional)</span></Label>
               <TagInput
                 placeholder="Add CC email..."
                 tags={emailContent.cc}
@@ -122,7 +120,7 @@ const EmailForm: React.FC<EmailFormProps> = ({ onEmailUpdate }) => {
             </div>
             
             <div className="space-y-2">
-              <Label>BCC Recipients</Label>
+              <Label>BCC Recipients <span className="text-muted-foreground text-xs">(optional)</span></Label>
               <TagInput
                 placeholder="Add BCC email..."
                 tags={emailContent.bcc}
@@ -132,7 +130,7 @@ const EmailForm: React.FC<EmailFormProps> = ({ onEmailUpdate }) => {
           </div>
 
           <div className="space-y-2">
-            <Label>Reply-To Addresses</Label>
+            <Label>Reply-To Addresses <span className="text-muted-foreground text-xs">(optional)</span></Label>
             <TagInput
               placeholder="Add reply-to email..."
               tags={emailContent.replyTo}
@@ -141,7 +139,7 @@ const EmailForm: React.FC<EmailFormProps> = ({ onEmailUpdate }) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="subject">Subject</Label>
+            <Label htmlFor="subject">Subject *</Label>
             <Input
               id="subject"
               placeholder="Email Subject"
@@ -152,7 +150,7 @@ const EmailForm: React.FC<EmailFormProps> = ({ onEmailUpdate }) => {
           </div>
 
           <div className="space-y-2">
-            <Label>Email Body</Label>
+            <Label>Email Body *</Label>
             <Tabs defaultValue="text">
               <TabsList>
                 <TabsTrigger value="text">Plain Text</TabsTrigger>
@@ -179,7 +177,7 @@ const EmailForm: React.FC<EmailFormProps> = ({ onEmailUpdate }) => {
 
           <div className="space-y-4 pt-4 border-t border-border">
             <div className="flex items-center justify-between">
-              <Label>Attachments</Label>
+              <Label>Attachments <span className="text-muted-foreground text-xs">(optional)</span></Label>
               <Button 
                 variant="outline" 
                 size="sm" 

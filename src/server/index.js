@@ -20,8 +20,9 @@ const validateEmailRequest = [
   check('smtp.username').notEmpty().withMessage('SMTP username is required'),
   check('smtp.password').notEmpty().withMessage('SMTP password is required'),
   check('smtp.crypto').isIn(['ssl', 'tls', 'none']).withMessage('Crypto must be ssl, tls, or none'),
-  check('email.fromEmail').isEmail().withMessage('Valid sender email is required'),
-  check('email.fromName').notEmpty().withMessage('Sender name is required'),
+  // Make from email and name optional
+  check('email.fromEmail').optional().isEmail().withMessage('If provided, sender email must be valid'),
+  check('email.fromName').optional(),
   check('email.to').isArray({ min: 1 }).withMessage('At least one recipient is required'),
   check('email.to.*').isEmail().withMessage('All recipients must be valid emails'),
   check('email.subject').notEmpty().withMessage('Subject is required'),
@@ -71,12 +72,19 @@ app.post('/api/send-email', validateEmailRequest, async (req, res) => {
 
     // Prepare email
     const mailOptions = {
-      from: `"${email.fromName}" <${email.fromEmail}>`,
-      to: email.to.join(', '),
       subject: email.subject,
       text: email.text,
       html: email.html,
+      to: email.to.join(', '),
     };
+    
+    // Add from field only if provided
+    if (email.fromEmail) {
+      const fromField = email.fromName 
+        ? `"${email.fromName}" <${email.fromEmail}>`
+        : email.fromEmail;
+      mailOptions.from = fromField;
+    }
 
     // Add optional fields if present
     if (email.cc && email.cc.length > 0) {
@@ -91,7 +99,7 @@ app.post('/api/send-email', validateEmailRequest, async (req, res) => {
       mailOptions.replyTo = email.replyTo.join(', ');
     }
     
-    if (email.attachments) {
+    if (email.attachments && email.attachments.length > 0) {
       mailOptions.attachments = email.attachments;
     }
 

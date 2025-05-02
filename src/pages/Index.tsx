@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import SmtpForm, { SmtpSettings } from '@/components/SmtpForm';
@@ -48,8 +47,6 @@ const Index: React.FC = () => {
     if (!smtpSettings.port) return 'SMTP port is required';
     if (!smtpSettings.username) return 'SMTP username is required';
     if (!smtpSettings.password) return 'SMTP password is required';
-    if (!emailContent.fromEmail) return 'From email is required';
-    if (!emailContent.fromName) return 'From name is required';
     if (emailContent.to.length === 0) return 'At least one recipient is required';
     if (!emailContent.subject) return 'Subject is required';
     if (!emailContent.text && !emailContent.html) return 'Email body (text or HTML) is required';
