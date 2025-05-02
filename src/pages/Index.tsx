@@ -43,7 +43,8 @@ const Index: React.FC = () => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  const [apiEndpoint, setApiEndpoint] = useState('https://email-relay-express-gateway.onrender.com/api/send-mail');
+  // Update to use the local API endpoint which is proxied through Vite
+  const [apiEndpoint, setApiEndpoint] = useState('/api/send-email');
   const [response, setResponse] = useState<{
     data?: any;
     status?: number;
@@ -134,6 +135,9 @@ const Index: React.FC = () => {
         }
       };
 
+      console.log('Sending request to endpoint:', apiEndpoint);
+      console.log('Payload:', JSON.stringify(payload, null, 2));
+
       const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
@@ -142,7 +146,22 @@ const Index: React.FC = () => {
         body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+      
+      // Check if response is JSON or text
+      const contentType = response.headers.get('content-type');
+      let data;
+      
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        // Handle non-JSON responses
+        const text = await response.text();
+        data = { message: text };
+      }
+      
+      console.log('Response data:', data);
       
       setResponse({
         data,
