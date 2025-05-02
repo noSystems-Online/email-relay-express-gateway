@@ -1,73 +1,80 @@
-# Welcome to your Lovable project
 
-## Project info
+# SMTP Email API Gateway
 
-**URL**: https://lovable.dev/projects/d720e09e-3c91-40ce-b798-83c0d50233b2
+A flexible REST API gateway that allows sending emails through any SMTP provider. Built with Node.js, Express, React, and Nodemailer.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- **Dynamic SMTP Configuration**: Connect to any SMTP provider by providing credentials at runtime
+- **Comprehensive Email Options**: Support for CC, BCC, reply-to, HTML/plain text content
+- **Error Handling**: Detailed validation and error reporting
+- **Modern UI**: Clean interface for testing the API
+- **API Documentation**: Built-in documentation for integrating with other services
 
-**Use Lovable**
+## API Endpoint
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/d720e09e-3c91-40ce-b798-83c0d50233b2) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+POST /api/send-email
 ```
 
-**Edit a file directly in GitHub**
+### Request Format
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```json
+{
+  "smtp": {
+    "host": "smtp.example.com",
+    "port": 587,
+    "username": "your-username",
+    "password": "your-password",
+    "crypto": "tls"  // "ssl", "tls", or "none"
+  },
+  "email": {
+    "fromEmail": "sender@example.com",
+    "fromName": "Sender Name",
+    "replyTo": ["reply@example.com"],
+    "to": ["recipient@example.com"],
+    "cc": ["cc@example.com"],
+    "bcc": ["bcc@example.com"],
+    "subject": "Test Subject",
+    "text": "Plain text version",
+    "html": "<p>HTML version</p>",
+    "attachments": [
+      {
+        "filename": "attachment.txt",
+        "content": "Hello World!",
+        "contentType": "text/plain"
+      }
+    ]
+  }
+}
+```
 
-**Use GitHub Codespaces**
+## Setup and Usage
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. Clone the repository
+2. Install dependencies:
+   ```
+   npm install
+   ```
+3. Start both the frontend and backend:
+   ```
+   node start.js
+   ```
+4. Or start them separately:
+   ```
+   # Start backend
+   node src/server/index.js
+   
+   # Start frontend (in a different terminal)
+   npm run dev
+   ```
 
-## What technologies are used for this project?
+## Technologies Used
 
-This project is built with:
+- **Backend**: Node.js, Express, Nodemailer
+- **Frontend**: React, TypeScript, Tailwind CSS, shadcn/ui
+- **Validation**: Express Validator
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## License
 
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/d720e09e-3c91-40ce-b798-83c0d50233b2) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+MIT
