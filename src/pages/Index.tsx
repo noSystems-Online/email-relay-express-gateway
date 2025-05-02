@@ -127,12 +127,20 @@ const Index: React.FC = () => {
         content: attachment.content
       }));
 
+      // Create a copy of email content to modify for sending
+      const emailPayload = {
+        ...emailContent,
+        attachments: processedAttachments.length > 0 ? processedAttachments : undefined
+      };
+
+      // If fromEmail is not provided, use the SMTP username as the default
+      if (!emailPayload.fromEmail) {
+        emailPayload.fromEmail = smtpSettings.username;
+      }
+
       const payload = {
         smtp: smtpSettings,
-        email: {
-          ...emailContent,
-          attachments: processedAttachments.length > 0 ? processedAttachments : undefined
-        }
+        email: emailPayload
       };
 
       console.log('Sending request to endpoint:', apiEndpoint);
