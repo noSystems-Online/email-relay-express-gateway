@@ -36,7 +36,7 @@ const Index: React.FC = () => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  const [apiEndpoint, setApiEndpoint] = useState('/api/send-email');
+  const [apiEndpoint, setApiEndpoint] = useState('https://email-relay-express-gateway.onrender.com/api/send-mail');
   const [response, setResponse] = useState<{
     data?: any;
     status?: number;
@@ -178,7 +178,7 @@ const Index: React.FC = () => {
                     id="apiEndpoint"
                     value={apiEndpoint}
                     onChange={(e) => setApiEndpoint(e.target.value)}
-                    placeholder="/api/send-email"
+                    placeholder="https://email-relay-express-gateway.onrender.com/api/send-mail"
                     className="font-mono"
                   />
                 </div>
