@@ -46,7 +46,7 @@ app.post('/api/send-email', validateEmailRequest, async (req, res) => {
   const { smtp, email } = req.body;
 
   try {
-    // Configure transport based on crypto setting
+    // Configure transport based on crypto setting    
     const transportConfig = {
       host: smtp.host,
       port: smtp.port,
@@ -56,7 +56,9 @@ app.post('/api/send-email', validateEmailRequest, async (req, res) => {
       }
     };
     
+     
     // Set secure option based on crypto
+    /*
     if (smtp.crypto === 'ssl') {
       transportConfig.secure = true;
     } else if (smtp.crypto === 'tls') {
@@ -67,6 +69,16 @@ app.post('/api/send-email', validateEmailRequest, async (req, res) => {
     } else {
       transportConfig.secure = false;
     }
+    */
+    if (smtp.crypto === 'ssl') {
+      transportConfig.secure = true; // Port 465
+    } else if (smtp.crypto === 'tls') {
+      transportConfig.secure = false; // Port 587
+      transportConfig.requireTLS = true; // This line is important for Gmail
+    } else {
+      transportConfig.secure = false;
+    }
+
 
     const transporter = nodemailer.createTransport(transportConfig);
 
